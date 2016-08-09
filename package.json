@@ -1,0 +1,39 @@
+{
+  "name": "freecodecamp-react",
+  "version": "1.0.0",
+  "description": "React Projects for freeCodeCamp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm bin && webpack",
+    "dev": "npm bin && webpack-dev-server",
+    "start": "npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cirych/freeCodeCamp-React.git"
+  },
+  "keywords": [
+    "freeCodeCamp",
+    "React Markdown Previewer",
+    "Camper Leaderboard",
+    "Recipe Box",
+    "Game of Life",
+    "Roguelike Dungeon Crawler Game"
+  ],
+  "author": "Cirych",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Cirych/freeCodeCamp-React/issues"
+  },
+  "homepage": "https://github.com/Cirych/freeCodeCamp-React#readme",
+  "dependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.4",
+    "html-webpack-plugin": "^2.22.0",
+    "webpack": "^1.13.1"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^1.14.1"
+  }
+}
