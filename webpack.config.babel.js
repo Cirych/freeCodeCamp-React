@@ -2,76 +2,85 @@ import path from 'path';
 import precss from 'precss';
 import autoprefixer from 'autoprefixer';
 import webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import NpmInstallPlugin from 'npm-install-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import paths from './app.config';
 
-const ROOT_PATH = path.resolve(__dirname);
-//const NODE_ENV_PROD = process.env.NODE_ENV === 'production';
+//const ROOT_PATH = path.resolve(__dirname);
 
 export default {
-	entry: path.resolve(ROOT_PATH, 'app/src/index'),
+	entry: paths.entry,
 	output: {
-		path: path.resolve(ROOT_PATH, 'app/build'),
+		path: paths.build,
 		//publicPath: '/',
 		filename: 'bundle.js'
 	},
 	devtool: 'source-map',  // 'eval',
 	resolve: {
-		extensions: ['', '.js', '.jsx', '.json']
+		extensions: ['.js', '.json', '']
 	},
 	module: {
 		preLoaders: [
 			{
-				test: /\.jsx?$/,
+				test: /\.js$/,
 				loaders: ['eslint'],
-				include: path.resolve(ROOT_PATH, './app')
+				include: paths.app
 			}
 		],
 		loaders: [
+			/*{
+				test: /\.html$/,
+				exclude: /node_modules/,
+				loader: 'html-loader'
+			},*/
 			{
-				test: /\.jsx?$/,
+				test: /\.js$/,
 				exclude: /node_modules/,
 				loaders: ['react-hot', 'babel'],
 			},
 			{
 				test: /\.css$/,
 				exclude: /node_modules/,
-				loaders: [
+				loader: ExtractTextPlugin.extract("style", "css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]!postcss")
+				/*loaders: [
 					'style',
 					'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
 					'postcss'
-				]
+				]*/
 			},
 			{
 				test: /\.scss$/,
 				exclude: /node_modules/,
-				loaders: [
+				loader: ExtractTextPlugin.extract("style", "css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]!postcss?pack=postScss!sass")
+				/*loaders: [
 					'style',
 					'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
 					'postcss?pack=postScss',
 					'sass'
-				]
+				]*/
 			},
 			{
 				test: /\.json$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'json'
 			},
 			{
 				test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'file',
 				query: {
-					name: 'static/media/[name].[ext]'
+					name: 'media/static/[name].[ext]'
 				}
 			},
 			{
 				test: /\.(mp4|webm)(\?.*)?$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'url',
 				query: {
 					limit: 10000,
-					name: 'static/media/[name].[ext]'
+					name: 'media/static/[name].[ext]'
 				}
 			}
 		]
@@ -99,7 +108,7 @@ export default {
 		}
 	),
 	devServer: {
-		contentBase: path.resolve(ROOT_PATH, 'app/build'),
+		contentBase: paths.build,
 		historyApiFallback: true,
 		hot: true,
 		inline: true,
@@ -107,9 +116,20 @@ export default {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			title: 'React Projects'
+			title: paths.appTitle,
+			template: paths.template,
+			favicon: paths.favicon
 		}),
 		new NpmInstallPlugin({ dev: true, peerDependencies: true }),
-		new webpack.HotModuleReplacementPlugin()
+		new webpack.HotModuleReplacementPlugin(),
+		new CopyWebpackPlugin(
+			[
+				{ from: './templates' }
+			],
+			{
+				ignore: ['*.html', '*.ico']
+			}
+		),
+		new ExtractTextPlugin("[name].css")
 	]
 };

@@ -2,75 +2,84 @@ import path from 'path';
 import precss from 'precss';
 import autoprefixer from 'autoprefixer';
 import webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-
-const ROOT_PATH = path.resolve(__dirname);
+import paths from './app.config';
 
 export default {
 	bail: true,
-	entry: path.resolve(ROOT_PATH, 'app/src/index'),
+	entry: paths.entry,
 	output: {
-		path: path.resolve(ROOT_PATH, 'app/dist'),
+		path: paths.dist,
 		//publicPath: '/',
 		filename: 'bundle.js'
 	},
 	resolve: {
-		extensions: ['', '.js', '.jsx', '.json']
+		extensions: ['.js', '.json', '']
 	},
 	devtool: "cheap-module-source-map",
 	module: {
 		preLoaders: [
 			{
-				test: /\.jsx?$/,
+				test: /\.js$/,
 				loaders: ['eslint'],
-				include: path.resolve(ROOT_PATH, './app')
+				include: paths.app
 			}
 		],
 		loaders: [
-			{
-				test: /\.jsx?$/,
+			/*{
+				test: /\.html$/,
 				exclude: /node_modules/,
-				loaders: ['babel'],
+				loader: 'html-loader'
+			},*/
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				loaders: ['react-hot', 'babel'],
 			},
 			{
 				test: /\.css$/,
 				exclude: /node_modules/,
-				loaders: [
+				loader: ExtractTextPlugin.extract("style", "css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]!postcss")
+				/*loaders: [
 					'style',
 					'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-					'postcss?pack=postReactCss'
-				]
+					'postcss'
+				]*/
 			},
 			{
 				test: /\.scss$/,
 				exclude: /node_modules/,
-				loaders: [
+				loader: ExtractTextPlugin.extract("style", "css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]!postcss?pack=postScss!sass")
+				/*loaders: [
 					'style',
 					'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-					'postcss?pack=postReactScss',
+					'postcss?pack=postScss',
 					'sass'
-				]
+				]*/
 			},
 			{
 				test: /\.json$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'json'
 			},
 			{
 				test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'file',
 				query: {
-					name: 'static/media/[name].[ext]'
+					name: 'media/static/[name].[ext]'
 				}
 			},
 			{
 				test: /\.(mp4|webm)(\?.*)?$/,
-				include: path.resolve(ROOT_PATH, 'app'),
+				include: paths.app,
 				loader: 'url',
 				query: {
 					limit: 10000,
-					name: 'static/media/[name].[ext]'
+					name: 'media/static/[name].[ext]'
 				}
 			}
 		]
@@ -100,9 +109,9 @@ export default {
 	plugins: [
 		new HtmlWebpackPlugin({
 			inject: true,
-			//template: paths.appHtml,
-			//favicon: paths.appFavicon,
-			title: 'React Projects',
+			template: paths.template,
+			favicon: paths.favicon,
+			title: paths.appTitle,
 			minify: {
 				removeComments: true,
 				collapseWhitespace: true,
@@ -135,6 +144,22 @@ export default {
 				comments: false,
 				screw_ie8: true
 			}
+		})
+		,new CopyWebpackPlugin(
+			[
+				{ from: './templates' }
+			],
+			{
+				ignore: ['*.html', '*.ico']
+			}
+		)
+		,new ExtractTextPlugin("[name].css")
+		,new CompressionPlugin({
+			asset: "[path].gz[query]",
+            algorithm: "gzip",
+            //test: /\.js$|\.html$|\.css$|\.svg$|\.json$|\.webapp$/,
+            //threshold: 10240,
+            minRatio: 0.8
 		})
 	]
 };

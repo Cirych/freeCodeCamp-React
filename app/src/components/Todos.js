@@ -1,7 +1,6 @@
 import React from 'react';
-import Todo from './Todo.jsx';
 import scss from './style.scss';
 
 export default () => (
-	<Todo className={scss.classNick} />
+	<div className={[scss.classNick]}>test2!</div>
 );
