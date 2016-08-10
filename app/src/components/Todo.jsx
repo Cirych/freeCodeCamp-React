@@ -1,5 +1,6 @@
 import React from 'react';
+import css from './style.css';
 
 export default () => (
-	<div>test!</div>
+	<div className={[css.className]}>test!</div>
 );

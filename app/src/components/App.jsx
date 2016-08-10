@@ -1,8 +1,7 @@
 import React from 'react';
 import Todo from './Todo.jsx';
-
-require('./App.scss');
+import scss from './style.scss';
 
 export default () => (
-	<Todo />
+	<Todo className={scss.classNick} />
 );

@@ -1,0 +1,9 @@
+$blue: #056ef0;
+:local(.className) {
+  background: $blue;
+  color: yellow;
+  box-shadow: 5px 5px 0 green;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  display: flex;
+}
